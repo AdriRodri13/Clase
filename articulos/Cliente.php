@@ -35,19 +35,20 @@ class Cliente
         return false;
     }
 
-    public function alquilar(Soporte $soporte): bool{
-        if($this->numeroSoportesAlquilados == $this->maxAlquilerConcurrente){
-            echo 'No se pueden alquilar mas soportes <br>';
-            return false;
-        }else if($this->tieneAlquilado($soporte)){
+    public function alquilar(Soporte $soporte): Cliente {
+        if ($this->numeroSoportesAlquilados == $this->maxAlquilerConcurrente) {
+            echo 'No se pueden alquilar más soportes <br>';
+            return $this;
+        } elseif ($this->tieneAlquilado($soporte)) {
             echo 'El soporte ya está alquilado <br>';
-            return false;
-        }else{
+            return $this;
+        } else {
             $this->soportesAlquilados[] = $soporte;
             $this->numeroSoportesAlquilados++;
-            return true;
+            return $this;
         }
     }
+
 
     public function devolver(int $numeroSoporte): bool{
         foreach ($this->soportesAlquilados as $index => $soporte) {

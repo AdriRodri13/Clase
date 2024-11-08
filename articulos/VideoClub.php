@@ -39,13 +39,13 @@ class VideoClub
         }
     }
 
-    public function alquilar(string $numeroCliente, string $numeroProdcuto){
-        foreach ($this->socios as $socio){
-            if ($numeroCliente == $socio->getNumero()){
-                if($socio instanceof Cliente){
-                    foreach ($this->productos as $producto){
-                        if ($numeroProdcuto == $producto->getNumero()){
-                            if($producto instanceof Soporte){
+    public function alquilar(string $numeroCliente, string $numeroProducto): Videoclub {
+        foreach ($this->socios as $socio) {
+            if ($numeroCliente == $socio->getNumero()) {
+                if ($socio instanceof Cliente) {
+                    foreach ($this->productos as $producto) {
+                        if ($numeroProducto == $producto->getNumero()) {
+                            if ($producto instanceof Soporte) {
                                 $socio->alquilar($producto);
                             }
                         }
@@ -53,6 +53,7 @@ class VideoClub
                 }
             }
         }
+        return $this;
     }
 
     public function devolver(string $numeroCliente, string $numeroProdcuto){
