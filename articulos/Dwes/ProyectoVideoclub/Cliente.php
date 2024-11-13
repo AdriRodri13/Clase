@@ -1,76 +1,65 @@
 <?php
 namespace Dwes\ProyectoVideoclub;
 
+use Dwes\ProyectoVideoclub\Util\{
+    SoporteYaAlquiladoException,
+    CupoSuperadoException,
+    SoporteNoEncontradoException
+};
+
 class Cliente
 {
-    private int $numeroSoportesAlquilados=0;
-    private array $soportesAlquilados=[];
+    private int $numeroSoportesAlquilados = 0;
+    private array $soportesAlquilados = [];
 
     public function __construct(
         public string $nombre,
         private int $numero,
-        private float $maxAlquilerConcurrente=3
-    )
-    {}
+        private float $maxAlquilerConcurrente = 3
+    ) {}
 
     public function getNumero(): int
     {
         return $this->numero;
     }
 
-    public function setNumero(int $numero): void
+    public function tieneAlquilado(Soporte $soporte): bool
     {
-        $this->numero = $numero;
+        return in_array($soporte, $this->soportesAlquilados, true);
     }
 
-    public function getNumeroSoportesAlquilados(): int
+    public function alquilar(Soporte $soporte): Cliente
     {
-        return $this->numeroSoportesAlquilados;
-    }
-
-
-    public function tieneAlquilado(Soporte $soporte): bool{
-        if($soporte instanceof Soporte){
-            return in_array($soporte, $this->soportesAlquilados);
+        if ($this->numeroSoportesAlquilados >= $this->maxAlquilerConcurrente) {
+            throw new CupoSuperadoException("El cliente ha superado el cupo máximo de alquileres.");
         }
-        return false;
-    }
 
-    public function alquilar(Soporte $soporte): Cliente {
-        if ($this->numeroSoportesAlquilados == $this->maxAlquilerConcurrente) {
-            echo 'No se pueden alquilar más soportes <br>';
-            return $this;
-        } elseif ($this->tieneAlquilado($soporte)) {
-            echo 'El soporte ya está alquilado <br>';
-            return $this;
-        } else {
-            $this->soportesAlquilados[] = $soporte;
-            $this->numeroSoportesAlquilados++;
-            return $this;
+        if ($this->tieneAlquilado($soporte)) {
+            throw new SoporteYaAlquiladoException("El soporte ya está alquilado por el cliente.");
         }
+
+        $this->soportesAlquilados[] = $soporte;
+        $this->numeroSoportesAlquilados++;
+        return $this;
     }
 
-
-    public function devolver(int $numeroSoporte): bool{
+    public function devolver(int $numeroSoporte): bool
+    {
         foreach ($this->soportesAlquilados as $index => $soporte) {
-        if ($soporte instanceof Soporte) {
             if ($soporte->getNumero() == $numeroSoporte) {
-                echo 'El soporte ha sido devuelto <br>';
-                $this->numeroSoportesAlquilados--;
                 unset($this->soportesAlquilados[$index]);
-                break;
+                $this->numeroSoportesAlquilados--;
+                return true;
             }
         }
-    }
-        echo 'No hay ningun soporte con ese numero <br>';
-        return false;
+
+        throw new SoporteNoEncontradoException("No se encontró el soporte con el número especificado.");
     }
 
-    public function listaAlquileres(){
-        foreach($this->soportesAlquilados as $soporte){
-            if($soporte instanceof Soporte){
-                $soporte->muestraResumen();
-            }
+    public function listaAlquileres()
+    {
+        foreach ($this->soportesAlquilados as $soporte) {
+            $soporte->muestraResumen();
         }
     }
 
