@@ -70,7 +70,7 @@ class Entreno{
         this._tiempoRealizacion = tiempoRealizacion;
         this._velocidad = this.calcularVelocidad(distanciaRecorrida,tiempoRealizacion);
         this._fecha = this.recogerFecha();
-        this._nivelEntreno = this.calcularNivelEntreno(this._velocidad);
+        this._nivelEntreno = Entreno.calcularNivelEntreno(distanciaRecorrida,tiempoRealizacion);
     }
 
     get distanciaRecorrida() {
@@ -100,11 +100,10 @@ class Entreno{
         const mes = (this._fecha.getMonth() + 1).toString().padStart(2, '0');
         const anio = this._fecha.getFullYear();
 
-        const fechaFormateada = `${dia}/${mes}/${anio}`;
-        return fechaFormateada;
+        return `${dia}/${mes}/${anio}`;
     }
 
-    calcularNivelEntreno(velocidad){
+    static calcularNivelEntreno(velocidad){
         if(velocidad<10){
             return "malo";
         }else if(velocidad>=10 && velocidad<20){
@@ -115,42 +114,14 @@ class Entreno{
     }
 }
 
-
-function mostrarTotalKm(){
-    const entrenos = persona.entrenos;
-    let totalKm = 0;
-    entrenos.forEach(entreno => {
-        totalKm += entreno._distanciaRecorrida;
-    })
-    mostrarKm(totalKm);
-}
-
-function mostrarKm(totalKm){
-    const ventana = window.open("", "Total Km", "width=400,height=300");
-
-    const contenido = `
-        <html>
-        <head>
-            <title>Total KM</title>
-        </head>
-        <body>
-            <h2>Total KM</h2>
-            <p><strong>Total:</strong> ${totalKm}</p>
-        </body>
-        </html>
-    `;
-
-    ventana.document.write(contenido);
-    ventana.document.close();
-
-    setTimeout(() => {
-        ventana.close();
-    }, 10000);
-}
-
 // Inicio Programa -> Esperamos a que cargue todo el documento con el DOMContentLoaded //
 
 document.addEventListener("DOMContentLoaded", function () {
+    let persona;
+    let contenedorPrograma = document.getElementById("contendor-programa");
+    contenedorPrograma.style.display = "none";
+    let contenedorEntreno = document.getElementById("contenedor-entreno");
+    contenedorEntreno.style.display = "none";
     let contenedorFormulario = document.getElementById('contenedor-formulario');
     let boton = document.getElementById('boton-registro');
     let comprobacionCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -196,9 +167,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if(comprobante === false){
                 contenedorFormulario.style.display = "none";
+                contenedorPrograma.style.display = "block";
+                persona = new Persona(nombre, correo, altura, peso, edad, entrenos);
+                gestionPrograma(persona);
             }
     })
-    let persona = new Persona(nombre, correo, altura, peso, edad, entrenos);
+
+    function gestionPrograma(Persona){
+        inicializarNuevoEntreno();
+        manejarFormularioEntreno(Persona)
+
+
+
+    }
+
+    function inicializarNuevoEntreno() {
+        let nuevoEntreno = document.getElementById("nuevo-entreno");
+        nuevoEntreno.addEventListener("click", function() {
+            let contenedorEntreno = document.getElementById("contenedor-entreno");
+            contenedorEntreno.style.display = "block";
+        });
+    }
+
+    function manejarFormularioEntreno(persona) {
+        let formularioEntreno = document.getElementById("formulario-entreno");
+        formularioEntreno.addEventListener("submit", function(event) {
+            event.preventDefault(); // Para evitar que recargue la página
+            let distancia = document.getElementById("distancia").value;
+            let velocidad = document.getElementById("velocidad").value;
+            let entreno = new Entreno(distancia, velocidad);
+            persona.addEntreno(entreno);
+            contenedorEntreno.style.display = "none";
+            alert(persona.entrenos)
+        });
+    }
+
+
 })
 
 
