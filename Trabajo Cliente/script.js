@@ -68,7 +68,7 @@ class Entreno{
     constructor(distanciaRecorrida,tiempoRealizacion) {
         this._distanciaRecorrida = distanciaRecorrida;
         this._tiempoRealizacion = tiempoRealizacion;
-        this._velocidad = this.calcularVelocidad(distanciaRecorrida,tiempoRealizacion);
+        this._velocidad = Entreno.calcularVelocidad(distanciaRecorrida,tiempoRealizacion);
         this._fecha = this.recogerFecha();
         this._nivelEntreno = Entreno.calcularNivelEntreno(distanciaRecorrida,tiempoRealizacion);
     }
@@ -89,8 +89,8 @@ class Entreno{
         this._tiempoRealizacion = value;
     }
 
-    calcularVelocidad(distanciaRecorrida,tiempoRealizacion) {
-        return distanciaRecorrida/tiempoRealizacion;
+    static calcularVelocidad(distanciaRecorrida,tiempoRealizacion) {
+        return tiempoRealizacion/distanciaRecorrida;
     }
 
     recogerFecha(){
@@ -107,7 +107,7 @@ class Entreno{
         if(velocidad<10){
             return "malo";
         }else if(velocidad>=10 && velocidad<20){
-            return "buena";
+            return "bueno";
         }else{
             return "muy bueno";
         }
@@ -118,10 +118,14 @@ class Entreno{
 
 document.addEventListener("DOMContentLoaded", function () {
     let persona;
+    let botones = document.getElementById("botones");
+    botones.style.display = "none";
     let contenedorPrograma = document.getElementById("contendor-programa");
     contenedorPrograma.style.display = "none";
     let contenedorEntreno = document.getElementById("contenedor-entreno");
     contenedorEntreno.style.display = "none";
+    let contenedorMejorEntreno = document.getElementById("contenedor-mejor-entreno");
+    contenedorMejorEntreno.style.display = "none";
     let contenedorFormulario = document.getElementById('contenedor-formulario');
     let boton = document.getElementById('boton-registro');
     let comprobacionCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -168,25 +172,39 @@ document.addEventListener("DOMContentLoaded", function () {
             if(comprobante === false){
                 contenedorFormulario.style.display = "none";
                 contenedorPrograma.style.display = "block";
+                botones.style.display = "block";
                 persona = new Persona(nombre, correo, altura, peso, edad, entrenos);
                 gestionPrograma(persona);
             }
     })
 
+
+
     function gestionPrograma(Persona){
         inicializarNuevoEntreno();
+        inicializarMejorEntreno();
         manejarFormularioEntreno(Persona)
-
-
 
     }
 
     function inicializarNuevoEntreno() {
+
         let nuevoEntreno = document.getElementById("nuevo-entreno");
         nuevoEntreno.addEventListener("click", function() {
+            ocultarHijos();
             let contenedorEntreno = document.getElementById("contenedor-entreno");
             contenedorEntreno.style.display = "block";
         });
+    }
+
+    function inicializarMejorEntreno() {
+
+        let mejorEntreno = document.getElementById("mejor-entreno");
+        mejorEntreno.addEventListener("click", function() {
+            ocultarHijos()
+            let mejorEntreno = document.getElementById("contenedor-mejor-entreno");
+            mejorEntreno.style.display = "block";
+        })
     }
 
     function manejarFormularioEntreno(persona) {
@@ -194,11 +212,29 @@ document.addEventListener("DOMContentLoaded", function () {
         formularioEntreno.addEventListener("submit", function(event) {
             event.preventDefault(); // Para evitar que recargue la página
             let distancia = document.getElementById("distancia").value;
-            let velocidad = document.getElementById("velocidad").value;
-            let entreno = new Entreno(distancia, velocidad);
-            persona.addEntreno(entreno);
-            contenedorEntreno.style.display = "none";
-            alert(persona.entrenos)
+            let tiempoRealizacion = document.getElementById("velocidad").value;
+            let nivel = document.querySelector('input[name="nivel"]:checked');
+            if(nivel){
+                let valorNivel = nivel.value;
+                let velocidad = Entreno.calcularVelocidad(distancia, tiempoRealizacion);
+                if(Entreno.calcularNivelEntreno(velocidad) !== valorNivel){
+                    alert("Debes introducir un entreno de nivel "+valorNivel);
+                }else{
+                    let entreno = new Entreno(distancia, velocidad);
+                    persona.addEntreno(entreno);
+                    contenedorEntreno.style.display = "none";
+                }
+            }else{
+                alert("Debes introducir un nivel")
+            }
+
+
+        });
+    }
+
+    function ocultarHijos(){
+        Array.from(contenedorPrograma.children).forEach(child => {
+            child.style.display = "none";
         });
     }
 
