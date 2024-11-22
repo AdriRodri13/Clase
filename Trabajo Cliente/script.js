@@ -127,6 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let contenedorMejorEntreno = document.getElementById("contenedor-mejor-entreno");
     contenedorMejorEntreno.style.display = "none";
     let contenedorFormulario = document.getElementById('contenedor-formulario');
+    contenedorFormulario.style.display = "none";
+    let botonInicio = document.getElementById("botonInicio");
+    botonInicio.addEventListener("click", function () {
+        contenedorFormulario.style.display = "block";
+        botonInicio.style.display = "none";
+    })
     let boton = document.getElementById('boton-registro');
     let comprobacionCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     let comprobante = false;
@@ -190,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function inicializarNuevoEntreno() {
 
         let nuevoEntreno = document.getElementById("nuevo-entreno");
-        nuevoEntreno.addEventListener("click", function() {
+        nuevoEntreno.addEventListener("click", function () {
             ocultarHijos();
             let contenedorEntreno = document.getElementById("contenedor-entreno");
             contenedorEntreno.style.display = "block";
@@ -200,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function inicializarMejorEntreno() {
 
         let mejorEntreno = document.getElementById("mejor-entreno");
-        mejorEntreno.addEventListener("click", function() {
+        mejorEntreno.addEventListener("click", function () {
             ocultarHijos()
             let mejorEntreno = document.getElementById("contenedor-mejor-entreno");
             mejorEntreno.style.display = "block";
