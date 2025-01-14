@@ -1,0 +1,23 @@
+
+
+<form action="/submit" method="post" enctype="multipart/form-data">
+  <!-- Campo para el nombre -->
+  <label for="nombre">Nombre:</label><br>
+  <input type="text" id="nombre" name="nombre" required><br><br>
+
+  <!-- Campo para el apellido -->
+  <label for="apellido">Apellido:</label><br>
+  <input type="text" id="apellido" name="apellido" required><br><br>
+
+  <!-- Campo para la fecha -->
+  <label for="fecha">Fecha:</label><br>
+  <input type="date" id="fecha" name="fecha" required><br><br>
+
+  <!-- Campo para subir una imagen -->
+  <label for="imagen">Subir Imagen:</label><br>
+  <input type="file" id="imagen" name="imagen" accept="image/*" required><br><br>
+
+  <!-- Botón de envío -->
+  <button type="submit">Enviar</button>
+</form>
+
